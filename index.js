@@ -32,7 +32,7 @@ var GrowlReporter = function(helper, logger) {
     return helper.merge(OPTIONS[type], {title: util.format(OPTIONS[type].title, browser)});
   };
 
-  growly.register('Testacular', '', [], function(error) {
+  growly.register('Karma', '', [], function(error) {
     var warning = 'No running verion of GNTP found.\n' +
                   'For more information see https://github.com/theabraham/growly.';
     if (error) {
