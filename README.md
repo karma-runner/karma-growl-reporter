@@ -11,8 +11,8 @@ The easiest way is to keep `karma-growl-reporter` as a devDependency in your `pa
 ```json
 {
   "devDependencies": {
-    "karma": "~0.9",
-    "karma-growl-reporter": "~0.0.1"
+    "karma": "~0.10",
+    "karma-growl-reporter": "~0.1"
   }
 }
 ```
@@ -22,7 +22,7 @@ You can simple do it by:
 npm install karma-growl-reporter --save-dev
 ```
 
-### 
+###
 
 ## Configuration
 ```js
