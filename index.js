@@ -25,11 +25,12 @@ var OPTIONS = {
 };
 
 
-var GrowlReporter = function(helper, logger) {
+var GrowlReporter = function(helper, logger, config) {
   var log = logger.create('reporter.growl');
 
   var optionsFor = function(type, browser) {
-    return helper.merge(OPTIONS[type], {title: util.format(OPTIONS[type].title, browser)});
+    var prefix = config && config.prefix ? config.prefix : '';
+    return helper.merge(OPTIONS[type], {title: prefix + util.format(OPTIONS[type].title, browser)});
   };
 
   growly.register('Karma', '', [], function(error) {
@@ -60,7 +61,7 @@ var GrowlReporter = function(helper, logger) {
   };
 };
 
-GrowlReporter.$inject = ['helper', 'logger'];
+GrowlReporter.$inject = ['helper', 'logger','config.growlReporter'];
 
 // PUBLISH DI MODULE
 module.exports = {
