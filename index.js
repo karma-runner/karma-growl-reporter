@@ -34,7 +34,8 @@ var GrowlReporter = function(helper, logger, config) {
   };
 
   growly.register('Karma', '', [], function(error) {
-    var warning = 'No running verion of GNTP found.\n' +
+    var warning = 'No running version of GNTP found.\n' +
+	               'Make sure the Growl service is installed and running.\n' +
                   'For more information see https://github.com/theabraham/growly.';
     if (error) {
       log.warn(warning);
