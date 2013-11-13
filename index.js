@@ -43,7 +43,9 @@ var GrowlReporter = function(helper, logger, config) {
   });
 
   this.adapters = [];
-
+  var previousResult;
+  var suppressRepeatedSuccess = config && config.suppressRepeatedSuccess;
+  
   this.onBrowserComplete = function(browser) {
     var results = browser.lastResult;
     var time = helper.formatTimeInterval(results.totalTime);
@@ -57,8 +59,13 @@ var GrowlReporter = function(helper, logger, config) {
           optionsFor('failed', browser.name));
     }
 
-    growly.notify(util.format(MSG_SUCCESS, results.success, time), optionsFor('success',
-        browser.name));
+    var sendMessage = !previousResult || previousResult.failed || !suppressRepeatedSuccess;
+    if (sendMessage) {	
+      growly.notify(util.format(MSG_SUCCESS, results.success, time), optionsFor('success',
+          browser.name));
+    }
+		
+    previousResult = results;
   };
 };
 
