@@ -49,6 +49,8 @@ var GrowlReporter = function(helper, logger, config) {
   this.onBrowserComplete = function(browser) {
     var results = browser.lastResult;
     var time = helper.formatTimeInterval(results.totalTime);
+    var sendSuccessMessage = !previousResult || previousResult.failed || !suppressRepeatedSuccess;
+    previousResult = results;
 
     if (results.disconnected || results.error) {
       return growly.notify(MSG_ERROR, optionsFor('error', browser.name));
@@ -59,13 +61,10 @@ var GrowlReporter = function(helper, logger, config) {
           optionsFor('failed', browser.name));
     }
 
-    var sendMessage = !previousResult || previousResult.failed || !suppressRepeatedSuccess;
-    if (sendMessage) {	
+    if (sendSuccessMessage) {	
       growly.notify(util.format(MSG_SUCCESS, results.success, time), optionsFor('success',
           browser.name));
     }
-		
-    previousResult = results;
   };
 };
 
