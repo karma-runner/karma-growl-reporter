@@ -9,16 +9,19 @@ var MSG_ERROR = '';
 var OPTIONS = {
   success: {
     dispname: 'Success',
+    label: 'Success',
     title: 'PASSED - %s',
     icon: path.join(__dirname, 'images/success.png')
   },
   failed: {
     dispname: 'Failure',
+    label: 'Failure',
     title: 'FAILED - %s',
     icon: path.join(__dirname, 'images/failed.png')
   },
   error: {
     dispname: 'Aborted',
+    label: 'Aborted',
     title: 'ERROR - %s',
     icon: path.join(__dirname, 'images/error.png')
   }
@@ -33,7 +36,7 @@ var GrowlReporter = function(helper, logger, config) {
     return helper.merge(OPTIONS[type], {title: prefix + util.format(OPTIONS[type].title, browser)});
   };
 
-  growly.register('Karma', '', [], function(error) {
+  growly.register('Karma', '', [OPTIONS.success, OPTIONS.failed, OPTIONS.error], function(error) {
     var warning = 'No running version of GNTP found.\n' +
 	                'Make sure the Growl service is installed and running.\n' +
                   'For more information see https://github.com/theabraham/growly.';
