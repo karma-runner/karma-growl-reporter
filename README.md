@@ -39,6 +39,9 @@ You can pass list of reporters as a CLI argument too:
 karma start --reporters growl,dots
 ```
 
+### Growl Client Configuration
+The reporter publishes three notification types "Success", "Failure", and "Aborted."  You can configure your Growl client to respond differently (or not at all) to each type.  Typically the reporter must be run at least once, in order for it to register with the client, before it can be configured.
+
 ----
 
 For more information on Karma see the [homepage].
