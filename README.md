@@ -39,6 +39,35 @@ You can pass list of reporters as a CLI argument too:
 karma start --reporters growl,dots
 ```
 
+#### Message Prefix (Optional)
+Adds a prefix to the growl message to help differentiate which tests have passed or failed. This is especially usefull if you are running multiple auto-watch instances of karma in parallel.
+
+**karma-unit.conf**
+```javascript
+module.exports = function(config){
+    config.set({
+        reporters: ['progress','growl'],
+        growlReporter:{
+            prefix:'UNIT TESTS-'
+        }
+   });
+};
+```
+**karma-production.conf**
+```javascript
+module.exports = function(config){
+    config.set({
+        reporters: ['progress','growl'],
+        growlReporter:{
+            prefix:'PRODUCTION TESTS-'
+        }
+   });
+};
+```
+
+![screen shot 2013-08-24 at 2 37 18 pm](https://f.cloud.github.com/assets/4082216/1021228/e59eae5c-0ced-11e3-8e2f-c726911368f5.png)
+
+
 ----
 
 For more information on Karma see the [homepage].
