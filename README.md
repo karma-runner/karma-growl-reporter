@@ -30,6 +30,7 @@ npm install karma-growl-reporter --save-dev
 module.exports = function(config) {
   config.set({
     reporters: ['progress', 'growl'],
+    plugins: ['karma-growl-reporter']
   });
 };
 ```
