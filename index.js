@@ -5,6 +5,7 @@ var path = require('path');
 var MSG_SUCCESS = '%d tests passed in %s.';
 var MSG_FAILURE = '%d/%d tests failed in %s.';
 var MSG_ERROR = '';
+var MSG_SKIPPED = '\n(skipped %d)'
 
 var OPTIONS = {
   success: {
@@ -33,9 +34,16 @@ var GrowlReporter = function(helper, logger, config) {
     return helper.merge(OPTIONS[type], {title: prefix + util.format(OPTIONS[type].title, browser)});
   };
 
+  var appendSkipped = function(results, msg) {
+    if (results.skipped === 0)
+      return msg;
+    else
+      return msg += util.format(MSG_SKIPPED, results.skipped)
+  }
+
   growly.register('Karma', '', [], function(error) {
     var warning = 'No running version of GNTP found.\n' +
-	                'Make sure the Growl service is installed and running.\n' +
+                    'Make sure the Growl service is installed and running.\n' +
                   'For more information see https://github.com/theabraham/growly.';
     if (error) {
       log.warn(warning);
@@ -47,18 +55,19 @@ var GrowlReporter = function(helper, logger, config) {
   this.onBrowserComplete = function(browser) {
     var results = browser.lastResult;
     var time = helper.formatTimeInterval(results.totalTime);
+    var msg;
 
     if (results.disconnected || results.error) {
       return growly.notify(MSG_ERROR, optionsFor('error', browser.name));
     }
 
     if (results.failed) {
-      return growly.notify(util.format(MSG_FAILURE, results.failed, results.total, time),
-          optionsFor('failed', browser.name));
+      msg = appendSkipped(results, util.format(MSG_FAILURE, results.failed, results.total - results.skipped, time));
+      return growly.notify(msg, optionsFor('failed', browser.name));
     }
 
-    growly.notify(util.format(MSG_SUCCESS, results.success, time), optionsFor('success',
-        browser.name));
+    msg = appendSkipped(results, util.format(MSG_SUCCESS, results.success, time));
+    growly.notify(msg, optionsFor('success', browser.name));
   };
 };
 
