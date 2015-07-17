@@ -30,6 +30,13 @@ npm install karma-growl-reporter --save-dev
 module.exports = function(config) {
   config.set({
     reporters: ['progress', 'growl'],
+    
+    /* Optionally add the following parameters */
+    growlReporter: {
+      prefix: 'Production ',  // Prefix to add to the start of notifications. Defaults to nothing
+      suppressRepeatedSuccess: true,  // If true, will suppress success messages when following a 
+                                      // previous successful run. Defaults to false;
+    },
   });
 };
 ```
