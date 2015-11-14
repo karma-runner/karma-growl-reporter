@@ -38,6 +38,18 @@ You can pass list of reporters as a CLI argument too:
 ```bash
 karma start --reporters growl,dots
 ```
+#### Message labels
+The notifications are given different growl labels, which can be used to configure how each are shown
+in the growl client:
+
+* New Success: The test run succeeded for the first time after startup or test failure
+* Success: All other successful test runs
+* Failed: The test run failed
+* Aborted: For some reason the test run did not work
+
+For example, you may make the "Success" and "New Success" green, Failure red, and Aborted orange. Or you may
+wish to hide the Success notifications, so you only see test success notification after they have fixed
+a test failure.
 
 #### Message Prefix (Optional)
 Adds a prefix to the growl message to help differentiate which tests have passed or failed. This is especially usefull if you are running multiple auto-watch instances of karma in parallel.
