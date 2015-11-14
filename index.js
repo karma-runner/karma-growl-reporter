@@ -13,6 +13,12 @@ var OPTIONS = {
     title: 'PASSED - %s',
     icon: path.join(__dirname, 'images/success.png')
   },
+  newSuccess: {
+    dispname: 'New Success',
+    label: "new_success",
+    title: 'PASSED - %s',
+    icon: path.join(__dirname, 'images/success.png')
+  },
   failed: {
     dispname: 'Failure',
     label: 'failure',
@@ -50,21 +56,32 @@ var GrowlReporter = function(helper, logger, config) {
 
   this.adapters = [];
 
+  var lastResultWasSuccess = false;
+
   this.onBrowserComplete = function(browser) {
     var results = browser.lastResult;
     var time = helper.formatTimeInterval(results.totalTime);
 
     if (results.disconnected || results.error) {
+      lastResultWasSuccess = false;
       return growly.notify(MSG_ERROR, optionsFor('error', browser.name));
     }
 
     if (results.failed) {
+      lastResultWasSuccess = false;
       return growly.notify(util.format(MSG_FAILURE, results.failed, results.total, time),
           optionsFor('failed', browser.name));
     }
+    var lastResult = lastResultWasSuccess;
+    lastResultWasSuccess = true;
+    if (lastResult) {
+      return growly.notify(util.format(MSG_SUCCESS, results.success, time), optionsFor('success',
+          browser.name));
+    } else {
+      return growly.notify(util.format(MSG_SUCCESS, results.success, time), optionsFor('newSuccess',
+          browser.name));
+    }
 
-    growly.notify(util.format(MSG_SUCCESS, results.success, time), optionsFor('success',
-        browser.name));
   };
 };
 
