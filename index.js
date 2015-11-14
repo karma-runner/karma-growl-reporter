@@ -3,7 +3,9 @@ var growly = require('growly');
 var path = require('path');
 
 var MSG_SUCCESS = '%d tests passed in %s.';
-var MSG_FAILURE = '%d/%d tests failed in %s.';
+var MSG_FAILURE = '%d/%d tests failed in %s.\n\n%s';
+var MAX_ERROR_MESSAGE_LENGTH = 50;
+var MAX_FAILURE_MESSAGES = 7;
 var MSG_ERROR = '';
 
 var OPTIONS = {
@@ -34,8 +36,10 @@ var OPTIONS = {
 };
 
 
-var GrowlReporter = function(helper, logger, config) {
+var GrowlReporter = function(baseReporterDecorator, helper, logger, config) {
   var log = logger.create('reporter.growl');
+
+  baseReporterDecorator(this);
 
   var optionsFor = function(type, browser) {
     var prefix = config && config.prefix ? config.prefix : '';
@@ -54,11 +58,40 @@ var GrowlReporter = function(helper, logger, config) {
     }
   });
 
+  var currentFailedResults = [];
+
   this.adapters = [];
 
   var lastResultWasSuccess = false;
 
+  this.specFailure = function(browser, result) {
+      console.log("specFailure");
+      currentFailedResults.push(result);
+  }
+
+  function formatFailedResult(result) {
+      var testName = result.suite.join("/") + ":" + result.description;
+      var message = result.log[0].match(".*");
+      if (message.length > MAX_ERROR_MESSAGE_LENGTH) {
+          message = message.slice(0, MAX_ERROR_MESSAGE_LENGTH - 3) + "...";
+      }
+      return testName + "\n  " + message;
+
+  }
+  function formatManyFailedResults(failedResults) {
+      var result = failedResults
+          .splice(0, MAX_FAILURE_MESSAGES)
+          .map(formatFailedResult).join("\n\n");
+      if (failedResults.length > MAX_FAILURE_MESSAGES) {
+          result += "\n\n ... and " + (failedResults.length - MAX_FAILURE_MESSAGES) + " more failures";
+      }
+      return result;
+
+  }
+
   this.onBrowserComplete = function(browser) {
+    var failedResults = currentFailedResults;
+    currentFailedResults = [];
     var results = browser.lastResult;
     var time = helper.formatTimeInterval(results.totalTime);
 
@@ -69,7 +102,8 @@ var GrowlReporter = function(helper, logger, config) {
 
     if (results.failed) {
       lastResultWasSuccess = false;
-      return growly.notify(util.format(MSG_FAILURE, results.failed, results.total, time),
+      var failureMessages = formatManyFailedResults(failedResults);
+      return growly.notify(util.format(MSG_FAILURE, results.failed, results.total, time, failureMessages),
           optionsFor('failed', browser.name));
     }
     var lastResult = lastResultWasSuccess;
@@ -85,7 +119,7 @@ var GrowlReporter = function(helper, logger, config) {
   };
 };
 
-GrowlReporter.$inject = ['helper', 'logger','config.growlReporter'];
+GrowlReporter.$inject = ['baseReporterDecorator', 'helper', 'logger','config.growlReporter'];
 
 // PUBLISH DI MODULE
 module.exports = {
